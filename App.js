@@ -1,56 +1,67 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useState, useEffect } from "react";
-import { StyleSheet, Text, View, ScrollView, Dimensions, TouchableOpacity, Modal, Button, SafeAreaView, FlatList, ActivityIndicator } from 'react-native';
+import {
+  StyleSheet, Text, View, ScrollView, Dimensions,
+  TouchableOpacity, Modal, Button, SafeAreaView, FlatList, ActivityIndicator,RefreshControl
+} from 'react-native';
 import { Stack, Avatar } from "@react-native-material/core";
 const { height, width } = Dimensions.get('window');
 import axios from 'axios';
 const jsondata = require('./post.json');
 
 const Feed = (props) => {
+  const [modalVisible, setModalVisible] = useState(false);
+
   return (
-    <TouchableOpacity style={{ display: 'flex', flexDirection: 'row', maxWidth: 320, marginTop: 20, borderWidth: 1 }} onPress={() => {
-      props.onhandleCharacterNumber(!props.modalVisible)
-    }
-    }>
-      <View style={{ padding: 8 }}>
-        <Avatar image={{ uri: props.url }} />
 
-      </View>
-      <View style={{ display: 'flex', flexDirection: 'column', maxWidth: 240 }}>
-        <Text style={{ padding: 8 }}> {props.name}</Text>
+    <View>
+      <TouchableOpacity style={{ display: 'flex', flexDirection: 'row', maxWidth: width*0.98, marginTop: 20, borderWidth: 1 }} onPress={() => {
+        setModalVisible(true)
+      }
+      }>
+        <View style={{ padding: 8 }}>
+          <Avatar image={{ uri: props.url }} />
 
-        <Text style={{ marginTop: 45 }}> {props.body}</Text>
+        </View>
+        <View style={{ display: 'flex', flexDirection: 'column', maxWidth: 240 }}>
+          <Text style={{ padding: 8 }}> {props.name}</Text>
 
-      </View>
+          <Text style={{ marginTop: 45 }}> {props.body}</Text>
+
+        </View>
+      </TouchableOpacity>
       <Modal
 
         animationType="slide"
         transparent={true}
-        visible={props.modalVisible}
+        visible={modalVisible}
       >
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
             <View style={{ display: 'flex', flex: 1, flexDirection: 'column' }}>
               <Button
                 onPress={() => {
-                  props.onhandleCharacterNumber(!props.modalVisible)
+                  setModalVisible(false)
                 }}
                 title="Back Feed"
                 accessibilityLabel="Learn more about this purple button"
               />
-              <View style={{ padding: 8 }}>
+              <View style={{alignItems: 'center',marginTop:15}}>
 
                 <Avatar image={{ uri: props.url }} />
               </View>
-              <Text style={{ padding: 8 }}> {props.name}</Text>
-              <Text style={{ marginTop: 45 }}> {props.body}</Text>
+              <View style={{alignItems: 'center',marginTop:25}}>
+              <Text > {props.name}</Text>
+              <Text style={{marginTop:25}}> {props.body}</Text>
+              </View>
 
             </View>
           </View>
         </View>
 
       </Modal>
-    </TouchableOpacity>
+    </View>
+
   );
 }
 
@@ -59,28 +70,22 @@ const body = 'bodyassssssssssssssssssssss sssssssssssss ssssssss ssssssssssss ss
 const url = "https://mui.com/static/images/avatar/1.jpg"
 
 export default function App() {
-  const [modalVisible, setModalVisible] = useState(false);
   const handleCharacterNumber = value => setModalVisible(value);
   // <Feed name={name} body={body} url={url} onhandleCharacterNumber={handleCharacterNumber} modalVisible={modalVisible} /> 
   const [posts, setPosts] = useState([])
-
-  const [photos, setPhotos] = useState([])
-
-  const [users, setUsers] = useState([])
-
-
-
+  
   useEffect(() => {
     setPosts(jsondata)
-    
+
   }, []);
 
   return (
     <View style={styles.container}>
 
-      <FlatList data={posts} keyExtractor={item => item.id} renderItem={({ item }) =>
-        
-        <Feed name={item.name} body={item.body} url={item.url} onhandleCharacterNumber={handleCharacterNumber} modalVisible={modalVisible} />
+      <FlatList data={posts} keyExtractor={item => item.id} 
+      renderItem={({ item }) =>
+
+        <Feed name={item.name} body={item.body} url={item.url} />
       }>
 
 
@@ -97,7 +102,16 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    margin: width * 0.125,
+    marginTop:35,
+    marginVertical: width * 0.05,
+    backgroundColor: '#fff',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  containerModal: {
+    flex: 1,
+    marginTop:10,
+    marginVertical: width * 0.05,
     backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
