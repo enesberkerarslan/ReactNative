@@ -1,8 +1,10 @@
 import { StatusBar } from 'expo-status-bar';
-import React, { useState } from "react";
-import { StyleSheet, Text, View, ScrollView, Dimensions, TouchableOpacity, Modal, Button } from 'react-native';
+import React, { useState, useEffect } from "react";
+import { StyleSheet, Text, View, ScrollView, Dimensions, TouchableOpacity, Modal, Button, SafeAreaView, FlatList, ActivityIndicator } from 'react-native';
 import { Stack, Avatar } from "@react-native-material/core";
 const { height, width } = Dimensions.get('window');
+import axios from 'axios';
+const jsondata = require('./post.json');
 
 const Feed = (props) => {
   return (
@@ -38,7 +40,8 @@ const Feed = (props) => {
               />
               <View style={{ padding: 8 }}>
 
-                <Avatar image={{ uri: props.url }} /></View>
+                <Avatar image={{ uri: props.url }} />
+              </View>
               <Text style={{ padding: 8 }}> {props.name}</Text>
               <Text style={{ marginTop: 45 }}> {props.body}</Text>
 
@@ -58,18 +61,34 @@ const url = "https://mui.com/static/images/avatar/1.jpg"
 export default function App() {
   const [modalVisible, setModalVisible] = useState(false);
   const handleCharacterNumber = value => setModalVisible(value);
+  // <Feed name={name} body={body} url={url} onhandleCharacterNumber={handleCharacterNumber} modalVisible={modalVisible} /> 
+  const [posts, setPosts] = useState([])
 
+  const [photos, setPhotos] = useState([])
+
+  const [users, setUsers] = useState([])
+
+
+
+  useEffect(() => {
+    setPosts(jsondata)
+    
+  }, []);
 
   return (
-    <ScrollView>
-      <View style={styles.container}>
+    <View style={styles.container}>
 
-        <Feed name={name} body={body} url={url} onhandleCharacterNumber={handleCharacterNumber} modalVisible={modalVisible} />
+      <FlatList data={posts} keyExtractor={item => item.id} renderItem={({ item }) =>
+        
+        <Feed name={item.name} body={item.body} url={item.url} onhandleCharacterNumber={handleCharacterNumber} modalVisible={modalVisible} />
+      }>
 
 
+      </FlatList>
 
-      </View>
-    </ScrollView>
+
+    </View>
+
   );
 }
 
